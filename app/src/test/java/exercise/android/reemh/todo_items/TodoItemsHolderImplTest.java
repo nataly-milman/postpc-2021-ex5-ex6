@@ -21,10 +21,8 @@ public class TodoItemsHolderImplTest {
     Assert.assertEquals(1, holderUnderTest.getCurrentItems().size());
   }
 
-  // TODO: add at least 10 more tests to verify correct behavior of your implementation of `TodoItemsHolderImpl` class
-
   @Test
-  public void when_removingTodoItem_then_callingListShouldHaveThisItem(){
+  public void when_removingTodoItem_then_callingListShouldNotHaveThisItem(){
     // setup
     TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
     Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
@@ -36,6 +34,40 @@ public class TodoItemsHolderImplTest {
 
     // verify
     Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+  }
+
+  @Test
+  public void when_removingTodoItem_then_callingListShouldNotHaveThisButOthersUntouched() throws InterruptedException {
+    // setup
+    TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    holderUnderTest.addNewInProgressItem("do shopping");
+    Thread.sleep(1);
+    holderUnderTest.addNewInProgressItem("don't delete");
+    TodoItem item = holderUnderTest.getCurrentItems().get(1);
+    holderUnderTest.deleteItem(item);
+
+    // verify
+    Assert.assertEquals(1, holderUnderTest.getCurrentItems().size());
+    Assert.assertEquals("don't delete", holderUnderTest.getCurrentItems().get(0).getDescription());
+  }
+
+  @Test
+  public void supports_same_name() throws InterruptedException {
+    // setup
+    TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    String descriptions = "task 1";
+    holderUnderTest.addNewInProgressItem(descriptions);
+    Thread.sleep(10);
+    holderUnderTest.addNewInProgressItem(descriptions);
+
+    // verify
+    Assert.assertEquals(2, holderUnderTest.getCurrentItems().size());
   }
 
   @Test
@@ -105,4 +137,71 @@ public class TodoItemsHolderImplTest {
     }
   }
 
+  @Test
+  public void uncheckOfDone_when_InProgress_doesnt_change_the_order() throws InterruptedException {
+    // setup
+    TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    String[] descriptions = new String[]{"task 1", "task 2", "task 3"};
+    for (String description : descriptions) {
+      holderUnderTest.addNewInProgressItem(description);
+      Thread.sleep(10);
+    }
+    TodoItem task2 = holderUnderTest.getCurrentItems().get(1);
+    holderUnderTest.markItemInProgress(task2);
+    // verify
+    // order as if no changes were made
+    Assert.assertEquals(descriptions.length, holderUnderTest.getCurrentItems().size());
+    for (int i = 0; i<holderUnderTest.getCurrentItems().size(); i++) {
+      Assert.assertEquals(descriptions[2-i], holderUnderTest.getCurrentItems().get(i).getDescription());
+    }
+  }
+
+  @Test
+  public void multiple_addition_order_with_Delete() throws InterruptedException {
+    // setup
+    TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    String[] descriptions = new String[]{"task 1", "task 2", "task 3"};
+    for (String description : descriptions) {
+      holderUnderTest.addNewInProgressItem(description);
+      Thread.sleep(10);
+    }
+    TodoItem task2 = holderUnderTest.getCurrentItems().get(1);
+    holderUnderTest.deleteItem(task2);
+    // verify
+    // order as if no changes were made
+    Assert.assertEquals(descriptions.length - 1, holderUnderTest.getCurrentItems().size());
+    for (int i = 0; i<holderUnderTest.getCurrentItems().size(); i++) {
+      Assert.assertNotEquals(descriptions[1], holderUnderTest.getCurrentItems().get(i).getDescription());
+    }
+  }
+
+  @Test
+  public void delete_unadded_item() {
+    // setup
+    TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    TodoItem task2 = new TodoItem();
+    task2.setDescription("test task");
+    holderUnderTest.deleteItem(task2);
+  }
+
+  @Test
+  public void mark_done_unadded_item() {
+    // setup
+    TodoItemsHolderImpl holderUnderTest = new TodoItemsHolderImpl();
+    Assert.assertEquals(0, holderUnderTest.getCurrentItems().size());
+
+    // test
+    TodoItem task2 = new TodoItem();
+    task2.setDescription("test task");
+    holderUnderTest.markItemDone(task2);
+  }
 }

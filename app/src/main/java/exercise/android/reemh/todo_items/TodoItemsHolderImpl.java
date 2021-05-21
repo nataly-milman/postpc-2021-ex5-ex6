@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TodoItemsHolderImpl implements TodoItemsHolder {
-  private List<TodoItem> todoItems = new LinkedList<>();
+  private final List<TodoItem> todoItems = new LinkedList<>();
 
   @Override
   public List<TodoItem> getCurrentItems() {
@@ -39,26 +39,23 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
     this.todoItems.remove(item);
   }
 
-  Comparator<TodoItem> compareTodoItems = new Comparator<TodoItem>() {
-    @Override
-    public int compare(TodoItem o1, TodoItem o2) {
+  Comparator<TodoItem> compareTodoItems = (o1, o2) -> {
 
-      if (!o1.isDone()){
-        if (o2.isDone()){
-          // o1 in progress, o2 done ( o1 > o2 )
-          return 1;
-        } else {
-          // both in progress
-          return o1.getCreationTime().compareTo(o2.getCreationTime());
-        }
+    if (!o1.isDone()){
+      if (o2.isDone()){
+        // o1 in progress, o2 done ( o1 > o2 )
+        return 1;
+      } else {
+        // both in progress
+        return o1.getCreationTime().compareTo(o2.getCreationTime());
       }
-      if (!o2.isDone()) {
-        // o2 in progress, o1 done
-        return -1;
-      }
-      // both done
-      return 0;
     }
+    if (!o2.isDone()) {
+      // o2 in progress, o1 done
+      return -1;
+    }
+    // both done
+    return 0;
   };
 
   public void sortTodoItems(){
