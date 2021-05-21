@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-// TODO: implement!
 public class TodoItemsHolderImpl implements TodoItemsHolder {
   private List<TodoItem> todoItems = new LinkedList<>();
 
@@ -64,6 +63,5 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
 
   public void sortTodoItems(){
     Collections.sort(this.todoItems, Collections.reverseOrder(this.compareTodoItems));
-    System.out.println(this.todoItems);
   }
 }

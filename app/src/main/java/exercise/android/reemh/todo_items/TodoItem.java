@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TodoItem implements Serializable {
-    // TODO: edit this class as you want
     private String description;
     private boolean isDone;
     private final Date creationTime;

@@ -1,18 +1,19 @@
 package exercise.android.reemh.todo_items;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
   public TodoItemsHolder holder = null;
+  private TodoItemsAdapter adapter;
+  private EditText editItem;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +24,23 @@ public class MainActivity extends AppCompatActivity {
       holder = new TodoItemsHolderImpl();
     }
 
-    // TODO: implement the specs as defined below
-    //    (find all UI components, hook them up, connect everything you need)
+    this.adapter = new TodoItemsAdapter(holder);
+    RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+    recyclerView.setAdapter(adapter);
+
+    this.editItem = findViewById(R.id.editTextInsertTask);
+    FloatingActionButton createItem = findViewById(R.id.buttonCreateTodoItem);
+
+    createItem.setOnClickListener(v -> {
+      String taskDescription = editItem.getText().toString();
+      if (taskDescription.equals("")){
+        return;
+      }
+      this.holder.addNewInProgressItem(taskDescription);
+      this.editItem.setText("");
+      this.adapter.notifyDataSetChanged();
+    });
   }
 }
 
@@ -33,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 SPECS:
 
 - the screen starts out empty (no items shown, edit-text input should be empty)
-- every time the user taps the "add TODO item" button:
+- every time the user taps the "add TO-DO item" button:
     * if the edit-text is empty (no input), nothing happens
     * if there is input:
         - a new TodoItem (checkbox not checked) will be created and added to the items list
