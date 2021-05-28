@@ -1,9 +1,14 @@
 package exercise.android.reemh.todo_items;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.EditText;
 
@@ -14,17 +19,21 @@ public class MainActivity extends AppCompatActivity {
   public TodoItemsHolder holder = null;
   private TodoItemsAdapter adapter;
   private EditText editItem;
+  private ApplicationClass application;
+  private BroadcastReceiver editBroadcastReceiver;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
+    application = (ApplicationClass) getApplicationContext();
     if (holder == null) {
       holder = new TodoItemsHolderImpl();
     }
 
-    this.adapter = new TodoItemsAdapter(holder);
+    application.loadTodoItems();
+    this.adapter = new TodoItemsAdapter(holder, this);
     RecyclerView recyclerView = findViewById(R.id.recyclerTodoItemsList);
     recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     recyclerView.setAdapter(adapter);
@@ -41,7 +50,49 @@ public class MainActivity extends AppCompatActivity {
       this.editItem.setText("");
       this.adapter.notifyDataSetChanged();
     });
+
+    editBroadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        if (intent.getAction().equals("editItem")) {
+          TodoItem changedItem = (TodoItem) intent.getSerializableExtra("Item");
+          holder.editItem(changedItem);
+          application.setTodoItems(holder.getCurrentItems());
+          application.saveTodoItems();
+          adapter.notifyDataSetChanged();
+        }
+      }
+    };
+    registerReceiver(editBroadcastReceiver, new IntentFilter("editItem"));
+
   }
+
+  @Override
+  protected void onStop(){
+    super.onStop();
+    application.setTodoItems(this.holder.getCurrentItems());
+    application.saveTodoItems();
+  }
+
+  @Override
+  protected void onResume(){
+    super.onResume();
+    application.loadTodoItems();
+    holder.setTodoItems(application.getTodoItems());
+  }
+
+  @Override
+  protected void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putSerializable("Holder", this.holder);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    this.unregisterReceiver(editBroadcastReceiver);
+  }
+
 }
 
 /*
