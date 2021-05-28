@@ -50,29 +50,27 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
     this.todoItems.remove(item);
   }
 
-
-
-  Comparator<TodoItem> compareTodoItems = (o1, o2) -> {
-
-    if (!o1.isDone()){
-      if (o2.isDone()){
-        // o1 in progress, o2 done ( o1 > o2 )
-        return 1;
-      } else {
-        // both in progress
-        return o1.getCreationTime().compareTo(o2.getCreationTime());
-      }
-    }
-    if (!o2.isDone()) {
-      // o2 in progress, o1 done
-      return -1;
-    }
-    // both done
-    return 0;
-  };
-
   public void sortTodoItems(){
-    Collections.sort(this.todoItems, Collections.reverseOrder(this.compareTodoItems));
+    Comparator<TodoItem> compareTodoItems = (o1, o2) -> {
+
+      if (!o1.isDone()){
+        if (o2.isDone()){
+          // o1 in progress, o2 done ( o1 > o2 )
+          return 1;
+        } else {
+          // both in progress
+          return o1.getLastEditTime().compareTo(o2.getLastEditTime());
+        }
+      }
+      if (!o2.isDone()) {
+        // o2 in progress, o1 done
+        return -1;
+      }
+      // both done
+      return 0;
+    };
+
+    Collections.sort(this.todoItems, Collections.reverseOrder(compareTodoItems));
   }
 
   public void setTodoItems(List<TodoItem> todoItems) {

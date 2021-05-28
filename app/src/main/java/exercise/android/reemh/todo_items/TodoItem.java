@@ -51,7 +51,7 @@ public class TodoItem implements Serializable {
 
     public void setDescription(String description) {
         this.lastEditTime = new Date();
-        this.description = description + " "+this.id + "/" + uniqueIds;;
+        this.description = description + " "+this.id + "/" + uniqueIds; //TODO remove test
     }
 
 }
