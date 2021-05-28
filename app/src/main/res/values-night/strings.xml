@@ -1,8 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TodoItems</string>
     <string name="created_on">Created on:</string>
     <string name="description">Description:</string>
     <string name="last_modified_on">Last Modified on:</string>
     <string name="is_done">Is done:</string>
-    <string name="edit_description">Edit Description</string>
 </resources>
