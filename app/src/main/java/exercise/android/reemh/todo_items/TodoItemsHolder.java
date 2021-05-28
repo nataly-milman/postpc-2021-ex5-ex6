@@ -1,9 +1,10 @@
 package exercise.android.reemh.todo_items;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public interface TodoItemsHolder {
+public interface TodoItemsHolder extends Serializable {
 
   /** Get a copy of the current items list */
   List<TodoItem> getCurrentItems();
@@ -22,4 +23,10 @@ public interface TodoItemsHolder {
 
   /** delete the @param item */
   void deleteItem(TodoItem item);
+
+  /** set all items at once */
+  void editItem(TodoItem item);
+
+  /** set all items at once */
+  void setTodoItems(List<TodoItem> todoItems);
 }

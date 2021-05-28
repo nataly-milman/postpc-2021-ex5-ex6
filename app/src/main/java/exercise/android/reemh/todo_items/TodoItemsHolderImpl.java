@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TodoItemsHolderImpl implements TodoItemsHolder {
-  private final List<TodoItem> todoItems = new LinkedList<>();
+  private List<TodoItem> todoItems = new LinkedList<>();
 
   @Override
   public List<TodoItem> getCurrentItems() {
@@ -35,9 +35,22 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
   }
 
   @Override
+  public void editItem(TodoItem item){
+    for (int i = 0; i < this.todoItems.size(); i++){
+      if (this.todoItems.get(i).getId() == item.getId()){
+        todoItems.set(i, item);
+        break;
+      }
+    }
+    this.sortTodoItems();
+  }
+
+  @Override
   public void deleteItem(TodoItem item) {
     this.todoItems.remove(item);
   }
+
+
 
   Comparator<TodoItem> compareTodoItems = (o1, o2) -> {
 
@@ -60,5 +73,9 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
 
   public void sortTodoItems(){
     Collections.sort(this.todoItems, Collections.reverseOrder(this.compareTodoItems));
+  }
+
+  public void setTodoItems(List<TodoItem> todoItems) {
+    this.todoItems = todoItems;
   }
 }
