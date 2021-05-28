@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,6 +60,15 @@ public class TodoItemsEditActivity extends AppCompatActivity {
                 updateModifiedTime();
             }
         });
+
+        Button okayButton = findViewById(R.id.okButton);
+
+        okayButton.setOnClickListener(v -> {
+            Intent changed = new Intent("editItem");
+            changed.putExtra("Item", this.item);
+            sendBroadcast(changed);
+            super.onBackPressed();
+        });
     }
 
     private void updateModifiedTime() {
@@ -76,8 +88,5 @@ public class TodoItemsEditActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent changed = new Intent("editItem");
-        changed.putExtra("Item", this.item);
-        sendBroadcast(changed);
     }
 }
