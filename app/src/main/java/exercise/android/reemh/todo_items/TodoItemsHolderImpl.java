@@ -48,6 +48,9 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
   @Override
   public void deleteItem(TodoItem item) {
     this.todoItems.remove(item);
+    if (this.todoItems.size() == 0){
+      TodoItem.resetUniqueId();
+    }
   }
 
   public void sortTodoItems(){
@@ -59,7 +62,7 @@ public class TodoItemsHolderImpl implements TodoItemsHolder {
           return 1;
         } else {
           // both in progress
-          return o1.getLastEditTime().compareTo(o2.getLastEditTime());
+          return o1.getCreationTime().compareTo(o2.getCreationTime());
         }
       }
       if (!o2.isDone()) {

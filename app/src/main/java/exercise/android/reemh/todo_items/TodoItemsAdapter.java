@@ -1,5 +1,7 @@
 package exercise.android.reemh.todo_items;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,25 +10,28 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class TodoItemsAdapter extends RecyclerView.Adapter<TodoItemsViewHolder> {
-    private TodoItemsHolder itemHolder;
+    private final TodoItemsHolder itemHolder;
+    Context context;
+    LayoutInflater inflater;
 
-    public TodoItemsAdapter(TodoItemsHolder itemHolder) {
+    public TodoItemsAdapter(TodoItemsHolder itemHolder, Context context) {
         this.itemHolder = itemHolder;
+        this.context = context;
+        this.inflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
     public TodoItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.row_todo_item, parent, false);
+        View view = this.inflater.inflate(R.layout.row_todo_item, parent, false);
         return new TodoItemsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TodoItemsViewHolder holder, int position) {
-        TodoItem curItem = this.itemHolder.getCurrentItems().get(position);
-        holder.taskDescription.setText(curItem.getDescription());
-        holder.checkBox.setChecked(curItem.isDone());
+        TodoItem itemInEditing = this.itemHolder.getCurrentItems().get(position);
+        holder.taskDescription.setText(itemInEditing.getDescription());
+        holder.checkBox.setChecked(itemInEditing.isDone());
 
         holder.checkBox.setOnClickListener(view -> {
             TodoItem item = itemHolder.getCurrentItems().get(holder.getLayoutPosition());
@@ -39,10 +44,16 @@ public class TodoItemsAdapter extends RecyclerView.Adapter<TodoItemsViewHolder> 
         });
 
         holder.deleteButton.setOnClickListener(view -> {
-            itemHolder.deleteItem(curItem);
+            itemHolder.deleteItem(itemInEditing);
             notifyDataSetChanged();
         }
         );
+
+        holder.taskDescription.setOnClickListener(view ->{
+            Intent editIntent = new Intent(this.context, TodoItemsEditActivity.class);
+            editIntent.putExtra("Item", itemInEditing);
+            this.context.startActivity(editIntent);
+        });
     }
 
     @Override

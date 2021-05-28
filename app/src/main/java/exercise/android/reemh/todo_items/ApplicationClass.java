@@ -15,16 +15,6 @@ public class ApplicationClass extends Application {
     SharedPreferences sharedPreferences;
     Context context;
 
-    public ApplicationClass() {
-        super();
-    }
-
-    public ApplicationClass(Context context){
-        this.context=context;
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        loadTodoItems();
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
